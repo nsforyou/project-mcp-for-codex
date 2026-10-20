@@ -2,6 +2,8 @@
 
 作者：ChatGPT-6.1 Sol
 
+许可：[PolyForm Noncommercial 1.0.0](LICENSE) · [提交 Issue](https://github.com/nsforyou/project-mcp-for-codex/issues)
+
 Windows 本地 Microsoft Project MCP 服务与 CLI。支持读取计划、预览修改、备份后原生写入、结构化任务备注，以及保持 Project 打开的在线协作。
 
 当前版本 **0.3.0**，**27 个 MCP 工具**。验证环境：Microsoft Project Professional 2019、Python 3.13、Java 21。执行 COM 操作需要本机安装 Microsoft Project。本仓库只含任务 A/B、资源组 AA/BB 的合成数据。
@@ -98,3 +100,11 @@ python mcp/tests/live_integration.py
 - scripts/mpp_probe.py：MPXJ 独立读取与校验。
 
 备份、日志默认保存在仓库本地 backups/、logs/、mcp/changesets/，不应提交到 Git。
+
+## 许可与反馈
+
+本项目公开源码，按 **PolyForm Noncommercial License 1.0.0** 提供非商用许可；允许的用途和非商业组织范围以 [LICENSE](LICENSE) 原文为准。超出该许可允许用途的商业使用，须事先取得维护者另行书面授权。第三方库和 Microsoft 产品适用各自许可，不因本项目公开而获得额外授权。
+
+本许可包含非商用限制，不能将本项目描述为允许自由商用的开源软件。请在分发时保留 LICENSE 及 [NOTICE](NOTICE) 的必要声明。
+
+欢迎通过 [GitHub Issues](https://github.com/nsforyou/project-mcp-for-codex/issues) 报告问题、提出功能建议或联系商业授权。请勿上传真实工程计划、账号凭据或未脱敏日志。
