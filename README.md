@@ -1,5 +1,7 @@
 # Project MCP for codex
 
+作者：ChatGPT-6.1 Sol
+
 Windows 本地 Microsoft Project MCP 服务与 CLI。支持读取计划、预览修改、备份后原生写入、结构化任务备注，以及保持 Project 打开的在线协作。
 
 当前版本 **0.3.0**，**27 个 MCP 工具**。验证环境：Microsoft Project Professional 2019、Python 3.13、Java 21。执行 COM 操作需要本机安装 Microsoft Project。本仓库只含任务 A/B、资源组 AA/BB 的合成数据。
