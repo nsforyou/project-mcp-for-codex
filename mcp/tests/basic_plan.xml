@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns="http://schemas.microsoft.com/project">
+  <StartDate>2026-11-02T08:00:00</StartDate>
+  <Tasks>
+    <Task><UID>10</UID><Name>A</Name><OutlineLevel>1</OutlineLevel><Start>2026-11-02T08:00:00</Start><Finish>2026-11-03T17:00:00</Finish><Duration>PT16H00M0S</Duration></Task>
+    <Task><UID>20</UID><Name>B</Name><OutlineLevel>1</OutlineLevel><Start>2026-11-04T08:00:00</Start><Finish>2026-11-05T17:00:00</Finish><Duration>PT16H00M0S</Duration><PredecessorLink><PredecessorUID>10</PredecessorUID><Type>1</Type><LinkLag>0</LinkLag></PredecessorLink></Task>
+  </Tasks>
+  <Resources><Resource><UID>90</UID><Name>AA</Name><MaxUnits>6</MaxUnits></Resource><Resource><UID>100</UID><Name>BB</Name><MaxUnits>4</MaxUnits></Resource></Resources>
+  <Assignments><Assignment><TaskUID>10</TaskUID><ResourceUID>90</ResourceUID><Units>2</Units></Assignment><Assignment><TaskUID>20</TaskUID><ResourceUID>100</ResourceUID><Units>4</Units></Assignment></Assignments>
+</Project>
