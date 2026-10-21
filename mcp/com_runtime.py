@@ -2,9 +2,10 @@
 from contextlib import contextmanager
 from pathlib import Path
 import msvcrt
+import os
 import psutil
 
-LOCK = Path(__file__).resolve().parent / "work" / "project-com.lock"
+LOCK = Path(os.environ.get("PROJECT_COM_LOCK", str(Path(__file__).resolve().parent / "work" / "project-com.lock")))
 
 
 def project_processes():

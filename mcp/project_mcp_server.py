@@ -27,10 +27,11 @@ import change_set as CS  # noqa: E402
 from com_bridge import (BridgeError, ROOT, com_snapshot, export_excel, mpxj_read, create_plan)  # noqa: E402
 from note_fields import read_fields, merge_fields
 from live_project import run_live
+import print_layout
 
 PROJECT_NAME = "Project MCP for codex"
 SERVER_NAME = "project-mcp-for-codex"
-SERVER_VERSION = "0.3.0"
+SERVER_VERSION = "0.4.0"
 PROTOCOL_VERSION = "2024-11-05"
 
 STATE: dict = {"active_file": None, "_cache": {}}
@@ -336,8 +337,29 @@ def t_export_excel(args: dict) -> dict:
     return {"output": out, "source": path}
 
 
+def t_preview_print(args: dict) -> dict:
+    return print_layout.preview(active_or(args.get("file")), args["output_dir"], args.get("profile"))
+
+
+def t_export_pdf(args: dict) -> dict:
+    return print_layout.export(active_or(args.get("file")), args["output_dir"], args.get("profile"),
+                               args.get("preview_sha256", ""))
+
+
 # ---------------------------------------------------------------- 工具清单
 TOOLS: list[dict] = [
+    {"name": "project_preview_print_layout", "description": "Preview copy-only Gantt print layout; no COM/file writes. 预览A3/A4、列宽、换行、字号、时间刻度、条内完成率和页眉页脚，返回执行指纹。",
+     "inputSchema": {"type": "object", "properties": {"file": {"type": "string"}, "output_dir": {"type": "string"},
+                      "profile": print_layout.PROFILE_SCHEMA},
+                     "required": ["output_dir"]}, "handler": t_preview_print},
+    {"name": "project_export_pdf", "description": "Export Gantt PDF and saved MPP copy using matching preview_sha256. 源MPP不写入；Project须关闭；导出后核验业务数据，PDF仍需目视验收；不发送打印作业。",
+     "inputSchema": {"type": "object", "properties": {"file": {"type": "string"}, "output_dir": {"type": "string"},
+                      "profile": print_layout.PROFILE_SCHEMA, "preview_sha256": {"type": "string"}},
+                     "required": ["output_dir", "preview_sha256"]}, "handler": t_export_pdf},
+    {"name": "project_check_pdf_layout", "description": "Inspect exported PDF paper size, text presence, minimum font and unexpanded field codes. PDF基础检查，不证明无截字或无遗漏，不连接Project。",
+     "inputSchema": {"type": "object", "properties": {"file": {"type": "string"}, "paper": {"type": "string", "enum": ["A3", "A4"]},
+                     "orientation": {"type": "string", "enum": ["landscape", "portrait"]}}, "required": ["file"]},
+     "handler": lambda args: print_layout.check_pdf(args["file"], args.get("paper"), args.get("orientation", "landscape"))},
     {"name": "project_live_read", "description": "读取已打开的活动 Project 内存状态；明确传 file。只连接既有进程，保留窗口，不保存。",
      "inputSchema": {"type": "object", "properties": {"file": {"type": "string"}}, "required": ["file"]},
      "handler": lambda args: run_live('read', args)},

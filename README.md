@@ -1,12 +1,14 @@
 # Project MCP for codex
 
-作者：ChatGPT-6.1 Sol
+作者：JhonPrice、ChatGPT-6.1 Sol
+
+[English](README.en.md) · 中文
 
 [非商用许可](LICENSE) · [提交问题或建议](https://github.com/nsforyou/project-mcp-for-codex/issues)
 
 让 Codex 读取和修改 Windows 上的 Microsoft Project 计划。你可以保持 Project 打开，与 Codex 讨论修改方案，确认后让改动显示在当前窗口，再决定保存或撤销。
 
-当前版本 **0.3.0**，提供 **27 个 MCP 工具**，也可直接通过 CLI 使用。仓库仅包含任务 **A/B**、资源组 **AA/BB** 的合成测试计划。
+当前版本 **0.4.0**，提供 **30 个 MCP 工具**，也可直接通过 CLI 使用。仓库仅包含任务 **A/B**、资源组 **AA/BB** 的合成测试计划。
 
 ## 目录
 
@@ -19,7 +21,8 @@
 - [备注中的工程量和状态字段](#备注中的工程量和状态字段)
 - [关闭 Project 后进行离线修改](#关闭-project-后进行离线修改)
 - [从 XML 新建 MPP](#从-xml-新建-mpp)
-- [27 个工具](#27-个工具)
+- [甘特图排版与 PDF 交付](#甘特图排版与-pdf-交付)
+- [30 个工具](#30-个工具)
 - [结果状态、备份与恢复](#结果状态备份与恢复)
 - [常见问题](#常见问题)
 - [测试与更新](#测试与更新)
@@ -96,7 +99,7 @@ $tools = .\.venv\Scripts\python.exe mcp\project_cli.py tools | ConvertFrom-Json
 $tools.Count
 ~~~
 
-正常情况下工具数量为 **27**。列出工具成功只说明服务代码和基础依赖可加载，不代表 Java、MPXJ 或 Project COM 都已验证。
+正常情况下工具数量为 **30**。列出工具成功只说明服务代码和基础依赖可加载，不代表 Java、MPXJ 或 Project COM 都已验证。
 
 PowerShell 中的 $env:MPXJ_LIB 只影响当前会话及其子进程。新终端需要重新设置；Codex 启动服务时使用下面配置中的环境变量。未设置时，桥接器默认查找 %LOCALAPPDATA%\ProjectMCP\deps。
 
@@ -385,7 +388,23 @@ Project 的 Notes 本质上仍是一个备注字段。本项目把每一行“�
 
 创建结果旁的 .creation.json 保存核验信息。生成文件但核验失败时，不会报告为成功，也不会自动覆盖或删除该文件。
 
-## 27 个工具
+## 甘特图排版与 PDF 交付
+
+0.4.0 新增三个共用 MCP/CLI 的工具：`project_preview_print_layout`、`project_export_pdf`、`project_check_pdf_layout`。
+
+支持 A3/A4、横向/纵向、显示列与列宽、长名称换行、9–16 磅字号、日/周刻度、日期窗口、纯文本页眉页脚，以及甘特条内部显示“完成百分比”。百分比绑定 Project 字段，不改变实际进度。
+
+~~~powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements-print.txt
+~~~
+
+例如告诉 Codex：“把计划导出为 A3 横向 PDF，任务名称换行，甘特条内部显示完成百分比；先给排版预览，再导出到新目录并检查 PDF。”
+
+预览不连接 Project、不写文件。执行需匹配的 `preview_sha256`，只在源 MPP 的副本上排版和保存，拒绝覆盖输出目录，并核验排版前后和重新打开后的任务、资源及分配一致。源文件保持原样。导出使用共享 COM 锁，要求 Project 已关闭。
+
+输出包括 `layout.mpp`、`native.pdf`、补充页码的 `print.pdf` 和 `verification.json`。成功状态为 `exported_needs_visual_review`，基础检查不等于逐页版面验收；此版本不向实体打印机提交作业。完整参数、CLI示例、已知限制及并行实例的锁配置见 [排版使用指南](docs/PRINTING.md)。
+
+## 30 个工具
 
 准确参数以实际服务的工具清单为准：
 
@@ -403,6 +422,7 @@ Project 的 Notes 本质上仍是一个备注字段。本项目把每一行“�
 | 离线变更集（5） | project_preview_changes、project_apply_changes、project_verify_changes、project_rollback_changes、project_list_change_sets |
 | 备注与进度（4） | project_append_task_note、project_set_actual_progress、project_get_task_note_fields、project_preview_task_note_fields |
 | 新建与导出（2） | project_create_from_xml、project_export_excel |
+| 排版与 PDF（3） | project_preview_print_layout、project_export_pdf、project_check_pdf_layout |
 
 project_close 只清理 MCP 的文件上下文，不会关闭用户的 Project 窗口。离线完整备注和视图读取走 COM，仍要求关闭 Project。
 
@@ -506,3 +526,41 @@ requirements-mpxj.txt 有变化时再更新 MPXJ 依赖。更新后重新连接 
 本许可含非商用限制，请勿把本项目描述为允许自由商用的开源软件。分发时保留 LICENSE 及 [NOTICE](NOTICE) 的必要声明。
 
 欢迎在 [GitHub Issues](https://github.com/nsforyou/project-mcp-for-codex/issues) 提交问题和建议。建议说明 Windows、Project、Python、Java 版本、使用的是在线还是离线模式、操作步骤及脱敏错误信息。请勿上传真实工程计划、账号凭据或未脱敏日志。
+
+## 支持方式
+
+[Buy Me a Coffee — 支持 OpenAI / 订阅 Codex](https://chatgpt.com/codex/pricing/) · [OpenAI 官网](https://openai.com/)
+
+如果希望支持本项目背后的工具，可以前往官方页面选择适合自己的订阅方案。这里指向 OpenAI 官方订阅信息，不是个人收款账户；订阅不是本项目额外设置的强制条件，实际权益及使用条件以官方页面为准。
+
+## Engineering Philosophy | 工程理念
+
+**中文**
+
+我们相信，人工智能不应该取代工程师的判断，而应该扩展工程师的能力。
+
+工程师负责定义目标、建立约束、识别风险并验证结果；AI 负责处理繁琐、重复且容易出错的工作。
+
+本项目尝试将自然语言、AI Agent 与 Microsoft Project 结合，让工程计划从编制、调整、校验到排版交付，逐步形成可追溯、可验证、可自动化的工作流程。
+
+**AI 不替工程师承担责任，但可以帮助工程师完成更多工作。**
+
+**English**
+
+We believe artificial intelligence should not replace engineering judgment, but extend engineering capabilities.
+
+Engineers define objectives, establish constraints, identify risks, and validate results. AI handles repetitive, time-consuming, and error-prone tasks.
+
+This project explores the integration of natural language, AI agents, and Microsoft Project to build a traceable, verifiable, and increasingly automated workflow for project planning, scheduling, validation, formatting, and delivery.
+
+**AI does not replace engineering accountability. It empowers engineers to accomplish more.**
+
+---
+
+*Developed through human–AI collaboration.*
+
+*Author: JhonPrice*
+
+> Built by an engineer, developed with AI, verified in the real world.
+>
+> 由工程师提出需求，与人工智能协作开发，并在真实工程实践中验证。

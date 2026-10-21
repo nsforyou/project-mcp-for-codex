@@ -1,0 +1,2 @@
+# Optional: install with the same Python used to run the MCP server.
+PyMuPDF>=1.24
